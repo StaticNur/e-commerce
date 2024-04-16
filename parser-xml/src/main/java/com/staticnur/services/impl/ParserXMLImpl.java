@@ -5,6 +5,7 @@ import com.staticnur.repositories.DataHandler;
 import com.staticnur.services.ParserXML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -25,11 +26,15 @@ public class ParserXMLImpl implements ParserXML {
 
     public void parseXML(String fileName, InputStream inputStream) {
         List<Attribute> dataList = new ArrayList<>();
+        //Object[] dataList;
+        //List<Object[]> dataList = new ArrayList<>();
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader parser = null;
         try {
             parser = factory.createXMLStreamReader(inputStream);
             Attribute currentData = null;
+
+            //List<Attribute> tempDataList = new ArrayList<>(); // Создаем временный список для хранения данных
 
             String name = "";
             while (parser.hasNext()) {
@@ -55,13 +60,16 @@ public class ParserXMLImpl implements ParserXML {
                             String isActual = currentData.getAttributesByKey("ISACTUAL");
                             if (("true".equals(isActive) || "1".equals(isActive)) && ("".equals(isActual) || "1".equals(isActual))) {
                                 dataList.add(currentData);
+                                //Object[] attribute = currentData.getAttributes().values().toArray(new Object[0]);
+                                //dataList.add(attribute);
+                                //tempDataList.add(currentData);
                                 currentData = null;
                             }
                         }
                         break;
                 }
                 // TODO ВЫНЕСТИ В ОТДЕЛЬНЫЙ СЕРВИС
-                if(dataList.size() > 100){
+                if(dataList.size() > 5000){
                     dataHandler.assignMethodToData(fileName, dataList);
                     dataList.clear();
                 }
@@ -69,6 +77,9 @@ public class ParserXMLImpl implements ParserXML {
             if (!dataList.isEmpty()){
                 dataHandler.assignMethodToData(fileName, dataList);
             }
+            //TODO проблема кастинга Object в Attribute
+            //dataList = tempDataList.toArray();
+            /*dataHandler.assignMethodToData(fileName, dataList);*/
             System.out.println("Ready file: "+name);
         } catch (XMLStreamException e) {
             e.printStackTrace();

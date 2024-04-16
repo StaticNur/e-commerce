@@ -8,17 +8,4 @@
 
     <include file="001-create-schema.xml" relativeToChangelogFile="true"/>
     <include file="002-create-tables.xml" relativeToChangelogFile="true"/>
-    <!--
-    select * from russian_address_data.room_type;
-    select * from russian_address_data.room;
-    select * from russian_address_data.house_type;
-    select * from russian_address_data.house;
-    select * from russian_address_data.apartment_type;
-    select * from russian_address_data.apartment;
-    select * from russian_address_data.adm_hierarchy;
-    select * from russian_address_data.addr_obj_type;
-    select * from russian_address_data.addr_obj;
-
-
-    -->
 </databaseChangeLog>

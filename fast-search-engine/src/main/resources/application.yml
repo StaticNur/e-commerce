@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+datasource:
+  acq:
+    clients:
+      pool-name: acq
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: jdbc:postgresql://localhost:5432/search_service
+      username: postgres_user
+      password: postgres_pass
+

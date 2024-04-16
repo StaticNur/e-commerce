@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
 @Component
 public class DataHandler {
     private final JdbcTemplate jdbcTemplate;
-    private static final Map<String, DataDAO> daoMap = new HashMap<>(){{
+    private static final Map<String, DataDAO> daoMap = new HashMap<>() {{
         put("AS_ADDR_OBJ", new AddrObjDAO());
         put("AS_ADDR_OBJ_TYPES", new AddrObjTypeDAO());
         put("AS_ADM_HIERARCHY", new AdmHierarchyDAO());
@@ -31,7 +32,9 @@ public class DataHandler {
 
     public void assignMethodToData(String nameFile, List<Attribute> data) {
         DataDAO dataDAO = daoMap.get(nameFile);
-        dataDAO.setJdbcTemplate(jdbcTemplate);
-        dataDAO.save(data);
+        if (dataDAO != null) {
+            dataDAO.setJdbcTemplate(jdbcTemplate);
+            dataDAO.save(data);
+        }
     }
 }

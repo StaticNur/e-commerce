@@ -1,12 +1,10 @@
 package com.staticnur.repositories;
 
 import com.staticnur.models.Attribute;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -15,8 +13,6 @@ import java.util.List;
 @Repository
 public class AddrObjDAO implements DataDAO {
     private JdbcTemplate jdbcTemplate;
-
-
 
     public void save(List<Attribute> data) {
         String INSERT_QUERY = "INSERT INTO RUSSIAN_ADDRESS_DATA.ADDR_OBJ (id, object_id, object_guid, change_id, name, type_name, level, opertype_id, prev_id, next_id, update_date, start_date, end_date, is_actual, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

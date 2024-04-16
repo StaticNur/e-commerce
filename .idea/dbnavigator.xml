@@ -6,7 +6,7 @@
   </component>
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
@@ -17,24 +17,108 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="d0fd571d-3dae-403d-b44d-4381c897b05d">
-      <console name="Connection" type="STANDARD" schema="russian_address_data" session="Main"><![CDATA[select * from russian_address_data.room_type;
-select * from russian_address_data.room;
-select * from russian_address_data.house_type;
-select * from russian_address_data.house;
-select * from russian_address_data.apartment_type;
-select * from russian_address_data.apartment;
-select * from russian_address_data.adm_hierarchy;
-select * from russian_address_data.addr_obj_type;
-select * from russian_address_data.addr_obj;]]></console>
+      <console name="Connection" type="STANDARD" schema="russian_address_data" session="Main"><![CDATA[SELECT split_part('hello world pen', ' ', 1) AS first_word
+
+
+SELECT split_part((select hierarchy.path from adm_hierarchy hierarchy where  id=123356236), '.', 0)
+
+select * from house (SELECT *
+FROM addr_obj obj
+WHERE obj.object_id = (
+  SELECT SPLIT_PART(hierarchy.path, '.', 1)::bigint AS first_part
+  FROM adm_hierarchy hierarchy
+  WHERE id = 123356236
+))
+
+SPLIT_PART(i.path, '.', 3)::bigint
+
+готовый
+SELECT o1.type_name, o1."name" City, o2.type_name, o2."name" Street,  ht.short_name, h.house_num, r.number, rt.short_name
+FROM adm_hierarchy i
+inner JOIN house h ON i.object_id = h.object_id
+inner JOIN addr_obj o1 ON SPLIT_PART(i.path, '.', 1)::bigint = o1.object_id
+inner JOIN addr_obj o2 ON i.parent_obj_id = o2.object_id
+inner join house_type ht on ht.id = h.house_type
+full outer join room r on SPLIT_PART(i.path, '.', 5) = r.object_id::varchar
+full outer join room_type rt on rt.id = r.room_type;
+
+быстрый готовый
+SELECT o1.type_name, o1."name" as City, o2.type_name, o2."name" as Street, ht.short_name, h.house_num, r.number, rt.short_name
+FROM adm_hierarchy i
+INNER JOIN house h ON i.object_id = h.object_id
+INNER JOIN addr_obj o1 ON CAST(SPLIT_PART(i.path, '.', 1) AS bigint) = o1.object_id
+INNER JOIN addr_obj o2 ON i.parent_obj_id = o2.object_id
+INNER JOIN house_type ht ON ht.id = h.house_type
+LEFT JOIN room r ON CAST(SPLIT_PART(i.path, '.', 5) AS varchar) = r.object_id::varchar
+LEFT JOIN room_type rt ON rt.id = r.room_type;
+
+
+
+SELECT r.number, rt.short_name
+FROM adm_hierarchy i
+join room r on '1411493' = r.object_id::varchar
+join room_type rt on rt.id = r.room_type;                           ROOM
+
+
+SELECT ap.number, apt.short_name
+FROM adm_hierarchy i
+join apartment ap on SPLIT_PART(i.path, '.', 6) = ap.object_id::varchar  
+join room_type apt on apt.id = ap.apart_type;                        apartment
+
+
+SELECT ht.short_name, h.house_num
+FROM adm_hierarchy i
+join house h on SPLIT_PART(i.path, '.', 4) = h.object_id::varchar  
+join house_type ht on ht.id = h.house_type;                        house
+
+
+, ap.apart_type, apt.short_name
+join room_type rt on rt.id = r.room_type
+join apartment ap on SPLIT_PART(i.path, '.', 6)::bigint = ap.object_id
+join room_type apt on apt.id = ap.apart_type::bigint;
+
+
+
+
+SELECT o1.type_name, o1."name" City, o2.type_name, o2."name" Street,  ht.short_name, h.house_num 
+FROM adm_hierarchy i
+inner JOIN house h ON i.object_id = h.object_id
+inner JOIN addr_obj o1 ON SPLIT_PART(i.path, '.', 1)::bigint = o1.object_id
+inner JOIN addr_obj o2 ON i.parent_obj_id = o2.object_id
+inner join house_type ht on ht.id = h.house_type;
+
+1 паз это OBJECTID для addr_obj
+3 паз это OBJECTID для house
+
+
+SELECT 
+    COUNT(DISTINCT r.number) AS number_count, 
+    COUNT(DISTINCT rt.short_name) AS short_name_count
+FROM adm_hierarchy i
+INNER JOIN house h ON i.object_id = h.object_id
+INNER JOIN addr_obj o1 ON SPLIT_PART(i.path, '.', 1)::bigint = o1.object_id
+INNER JOIN addr_obj o2 ON i.parent_obj_id = o2.object_id
+INNER JOIN house_type ht ON ht.id = h.house_type
+FULL OUTER JOIN room r ON SPLIT_PART(i.path, '.', 5) = r.object_id::varchar
+FULL OUTER JOIN room_type rt ON rt.id = r.room_type;
+
+SELECT 
+    o1.type_name, o1."name" as City, o2.type_name, o2."name" as Street, ht.short_name, h.house_num, r.number, rt.short_name
+FROM adm_hierarchy i
+INNER JOIN house h ON i.object_id = h.object_id
+INNER JOIN addr_obj o1 ON SPLIT_PART(i.path, '.', 1)::bigint = o1.object_id
+INNER JOIN addr_obj o2 ON i.parent_obj_id = o2.object_id
+INNER JOIN house_type ht ON ht.id = h.house_type
+FULL OUTER JOIN room r ON SPLIT_PART(i.path, '.', 5) = r.object_id::varchar
+FULL OUTER JOIN room_type rt ON rt.id = r.room_type
+WHERE r.number IS NOT NULL AND rt.short_name IS NOT NULL;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="d0fd571d-3dae-403d-b44d-4381c897b05d" object-ref="consoles/Connection" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="d0fd571d-3dae-403d-b44d-4381c897b05d" />
@@ -455,8 +539,8 @@ select * from russian_address_data.addr_obj;]]></console>
     </code-completion-settings>
     <execution-engine-settings>
       <statement-execution>
-        <fetch-block-size value="100" />
-        <execution-timeout value="20" />
+        <fetch-block-size value="10000" />
+        <execution-timeout value="40" />
         <debug-execution-timeout value="600" />
         <focus-result value="false" />
         <prompt-execution value="false" />

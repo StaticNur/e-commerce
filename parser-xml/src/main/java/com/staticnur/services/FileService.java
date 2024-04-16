@@ -32,8 +32,8 @@ public class FileService {
             Enumeration<? extends ZipEntry> entries;
 
             // fiXME: ПЕРЕДЕЛАТЬ
+            entries = zipFile.entries();
             for (int i = 0; i < regions.size(); i++) {
-                entries = zipFile.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
                     String entryName = entry.getName();
@@ -61,7 +61,8 @@ public class FileService {
     }
 }
 
-/*String entryName = entry.getName();
+/*
+String entryName = entry.getName();
                     Matcher matcher = pattern.matcher(entryName);
                     if(entry.isDirectory() && !regionAlreadyRead.contains(regions.get(i))){
                         regionAlreadyRead.add(regions.get(i));

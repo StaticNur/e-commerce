@@ -1,0 +1,5 @@
+#jdbc:
+#  driver: org.postgresql.Driver
+#  url: jdbc:postgresql://host.docker.internal:5433/demo
+#  user: postgres
+#  password: postgres
