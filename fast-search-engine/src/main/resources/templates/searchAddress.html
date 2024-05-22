@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Address Search</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             background-color: #1c2823d0;
@@ -41,16 +42,65 @@
             width: 25px;
             height: 25px;
         }
+        #results {
+            margin-top: 10px;
+        }
+
+        #results li {
+            list-style-type: none;
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #ccc;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="Enter your search query">
-            <div class="search-btn">
-                <img src="search-icon.png" alt="Search icon">
+            <input type="text" class="search-input" id="searchInput" placeholder="Enter your search query">
+            <div class="search-btn" id="searchBtn">
+                <img src="/search-icon.png" alt="Search icon">
             </div>
         </div>
     </div>
+    <div class="container">
+        <ul id="results"></ul>
+    </div>
+<script>
+    $(document).ready(function() {
+        $('.search-btn').click(function() {
+            let query = $('#searchInput').val();
+            fetchAddresses(query);
+        });
+
+        $('#searchInput').keypress(function(e) {
+            if (e.which === 13) { // Enter key
+                let query = $('#searchInput').val();
+                fetchAddresses(query);
+            }
+        });
+
+        function fetchAddresses(query) {
+            $.get("http://localhost:8080/api/search", {query: query}, function(data) {
+                displayAddresses(data);
+            });
+        }
+
+        function displayAddresses(addresses) {
+            let resultsList = $('#results');
+            resultsList.empty();
+
+            let addressKeys = Object.keys(addresses);
+            resultsList.append('<li>Количество адресов: ' + addressKeys.length + '</li>');
+
+            addresses.forEach(function(address) {
+                resultsList.append('<li>' + address.city+', '+address.street+', '+address.house+', '+address.room + '</li>');
+            });
+        }
+    });
+</script>
 </body>
 </html>

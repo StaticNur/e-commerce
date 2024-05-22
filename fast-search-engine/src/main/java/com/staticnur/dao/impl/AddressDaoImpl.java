@@ -1,16 +1,10 @@
 package com.staticnur.dao.impl;
 
 import com.staticnur.dao.AddressDao;
-import com.staticnur.model.Address;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
@@ -24,15 +18,34 @@ public class AddressDaoImpl implements AddressDao {
     }
 
     @Override
-    public List<Map<String, Object>> findAll() {
-        String GET_ALL_QUERY = "SELECT o1.type_name as CityType, o1.name as City, o2.type_name as StreetType, o2.name as Street, ht.short_name as ShortNameHouse, h.house_num as House, rt.short_name as ShortNameRoom, r.number as Room " +
-                               "FROM RUSSIAN_ADDRESS_DATA.adm_hierarchy i " +
-                               "INNER JOIN RUSSIAN_ADDRESS_DATA.house h ON i.object_id = h.object_id " +
-                               "INNER JOIN RUSSIAN_ADDRESS_DATA.addr_obj o1 ON CAST(SPLIT_PART(i.path, '.', 1) AS bigint) = o1.object_id " +
-                               "INNER JOIN RUSSIAN_ADDRESS_DATA.addr_obj o2 ON i.parent_obj_id = o2.object_id " +
-                               "INNER JOIN RUSSIAN_ADDRESS_DATA.house_type ht ON ht.id = h.house_type " +
-                               "LEFT JOIN RUSSIAN_ADDRESS_DATA.room r ON CAST(SPLIT_PART(i.path, '.', 5) AS varchar) = r.object_id::varchar " +
-                               "LEFT JOIN RUSSIAN_ADDRESS_DATA.room_type rt ON rt.id = r.room_type;";
-         return jdbcTemplate.queryForList(GET_ALL_QUERY);
+    public List<Map<String, Object>> findBatch(long page, long size) {
+        long offset = page * size;
+        String GET_ALL_QUERY = """
+                  SELECT region.type_name as region_type, region.name as region, district.type_name as district_type, district.name as district,
+                   city.type_name as city_type, city.name as city, street.type_name as street_type, street.name as street,
+                   ht.short_name as short_name_house, house.house_num as house, apt.short_name as short_name_apartm, apartm.number as apartm,
+                   rt.short_name as short_name_room, room.number as room, i.path
+                  FROM RUSSIAN_ADDRESS_DATA.adm_hierarchy i
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj region ON SPLIT_PART(i.path, '.', 1) = region.object_id::varchar
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj district ON SPLIT_PART(i.path, '.', 2) = district.object_id::varchar
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj city ON SPLIT_PART(i.path, '.', 3) = city.object_id::varchar
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj street ON SPLIT_PART(i.path, '.', 4) = street.object_id::varchar
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.house house ON CASE
+                          WHEN district.type_name = 'г' THEN SPLIT_PART(i.path, '.', 4)
+                          ELSE SPLIT_PART(i.path, '.', 5)
+                      END = house.object_id::varchar
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.house_type ht ON ht.id = house.house_type
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.apartment apartm ON CASE
+                          WHEN district.type_name = 'г' THEN SPLIT_PART(i.path, '.', 5)
+                          ELSE SPLIT_PART(i.path, '.', 6)
+                      END = apartm.object_id::varchar
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.apartment_type apt ON apt.id = apartm.apart_type
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.room room ON CASE
+                          WHEN district.type_name = 'г' THEN SPLIT_PART(i.path, '.', 6)
+                          ELSE SPLIT_PART(i.path, '.', 7)
+                      END = room.object_id::varchar
+                  LEFT JOIN RUSSIAN_ADDRESS_DATA.room_type rt ON rt.id = room.room_type;
+                """;
+        return jdbcTemplate.queryForList(GET_ALL_QUERY);
     }
 }

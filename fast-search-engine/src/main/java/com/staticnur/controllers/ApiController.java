@@ -1,12 +1,13 @@
 package com.staticnur.controllers;
 
 import com.staticnur.model.Address;
+import com.staticnur.model.Response;
 import com.staticnur.services.EsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -25,17 +26,10 @@ public class ApiController {
     }
 
     @PostMapping("/download")
-    public String downloadDataInEs(){
+    public ResponseEntity<Response> downloadDataInEs() {
         esService.download();
-        return "Данные успешно загружены из PostgreSQL в ElasticSearch";
+        return ResponseEntity.ok(new Response("Данные успешно загружены из PostgreSQL в ElasticSearch"));
     }
-
-    /*@PutMapping("/articles")
-    public String addArticle(@RequestParam("title") String title, @RequestParam("text") String text) throws Exception {
-        String id = UUID.randomUUID().toString();
-        esService.updateAddress(id, title, text);
-        return id;
-    }*/
 
     @GetMapping("/search")
     public List<Address> search(@RequestParam("query") String query) throws Exception {

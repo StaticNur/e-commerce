@@ -9,4 +9,3 @@ datasource:
       jdbc-url: jdbc:postgresql://localhost:5432/search_service
       username: postgres_user
       password: postgres_pass
-

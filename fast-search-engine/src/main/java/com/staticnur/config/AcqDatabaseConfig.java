@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @ConfigurationProperties(prefix = "datasource.acq.clients")
-public class AcqDatabaseConfig extends HikariConfig{
+public class AcqDatabaseConfig extends HikariConfig {
 
     @Bean
     @LiquibaseDataSource

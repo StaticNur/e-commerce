@@ -7,15 +7,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="parser-xml" />
         <module name="fast-search-engine" />
+        <module name="address-parser" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="address-parser" options="-parameters" />
       <module name="fast-search-engine" options="-parameters" />
-      <module name="parser-xml" options="-parameters" />
     </option>
   </component>
 </project>

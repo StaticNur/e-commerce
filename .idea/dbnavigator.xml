@@ -9,6 +9,24 @@
     <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
+  <component name="DBNavigator.Project.DataExportManager">
+    <export-instructions>
+      <create-header value="true" />
+      <friendly-headers value="false" />
+      <quote-values-containing-separator value="true" />
+      <quote-all-values value="false" />
+      <value-separator value="" />
+      <begin-quote value="&quot;" />
+      <end-quote value="&quot;" />
+      <file-name value="" />
+      <file-location value="" />
+      <scope value="GLOBAL" />
+      <destination value="FILE" />
+      <format value="EXCEL" />
+      <charset value="windows-1251" />
+      <charset value="windows-1251" />
+    </export-instructions>
+  </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
@@ -43,15 +61,21 @@ full outer join room r on SPLIT_PART(i.path, '.', 5) = r.object_id::varchar
 full outer join room_type rt on rt.id = r.room_type;
 
 быстрый готовый
-SELECT o1.type_name, o1."name" as City, o2.type_name, o2."name" as Street, ht.short_name, h.house_num, r.number, rt.short_name
-FROM adm_hierarchy i
-INNER JOIN house h ON i.object_id = h.object_id
-INNER JOIN addr_obj o1 ON CAST(SPLIT_PART(i.path, '.', 1) AS bigint) = o1.object_id
-INNER JOIN addr_obj o2 ON i.parent_obj_id = o2.object_id
-INNER JOIN house_type ht ON ht.id = h.house_type
-LEFT JOIN room r ON CAST(SPLIT_PART(i.path, '.', 5) AS varchar) = r.object_id::varchar
-LEFT JOIN room_type rt ON rt.id = r.room_type;
-
+SELECT region.type_name as region_type, region.name as region, district.type_name as district_type, district.name as district,
+ city.type_name as city_type, city.name as city, street.type_name as street_type, street.name as street,
+ ht.short_name as short_name_house, house.house_num as house, apt.short_name as short_name_apartm, apartm.number as apartm,
+ rt.short_name as short_name_room, room.number as room, i.path
+FROM RUSSIAN_ADDRESS_DATA.adm_hierarchy i
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj region ON SPLIT_PART(i.path, '.', 1) = region.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj district ON SPLIT_PART(i.path, '.', 2) = district.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj city ON SPLIT_PART(i.path, '.', 3) = city.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj street ON SPLIT_PART(i.path, '.', 4) = street.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.house house ON SPLIT_PART(i.path, '.', 5) = house.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.house_type ht ON ht.id = house.house_type
+LEFT JOIN RUSSIAN_ADDRESS_DATA.apartment apartm ON SPLIT_PART(i.path, '.', 6) = apartm.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.apartment_type apt ON apt.id = apartm.apart_type
+LEFT JOIN RUSSIAN_ADDRESS_DATA.room room ON SPLIT_PART(i.path, '.', 7) = room.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.room_type rt ON rt.id = room.room_type;
 
 
 SELECT r.number, rt.short_name
@@ -111,14 +135,77 @@ INNER JOIN addr_obj o2 ON i.parent_obj_id = o2.object_id
 INNER JOIN house_type ht ON ht.id = h.house_type
 FULL OUTER JOIN room r ON SPLIT_PART(i.path, '.', 5) = r.object_id::varchar
 FULL OUTER JOIN room_type rt ON rt.id = r.room_type
-WHERE r.number IS NOT NULL AND rt.short_name IS NOT NULL;]]></console>
+WHERE r.number IS NOT NULL AND rt.short_name IS NOT NULL;
+
+
+
+
+
+
+
+select * from russian_address_data.room_type;
+select * from russian_address_data.room r where r.object_id='100720798';
+select * from russian_address_data.house_type;
+select * from russian_address_data.house h where h.object_id='100720798';
+select * from russian_address_data.apartment_type;
+
+SELECT apt.short_name, ap.number FROM russian_address_data.apartment ap
+            JOIN russian_address_data.apartment_type apt ON apt.id = ap.apart_type WHERE ap.object_id=100720798
+            
+            
+144932.145861.147681.147829.75774721.75776187
+144932.147135.148133.150075.3078245.3078508.3078524 room
+обл     Район город  street  house  apartm   room                
+144932.147135.148249   
+144932.144958.147916.100720798
+select * from russian_address_data.apartment a where a.object_guid='2346bbc8-9abb-4e0e-a716-8cde34c7e143';
+select a.id, a.object_id, a.parent_obj_id, a.change_id, a.region_code, a.path 
+from russian_address_data.adm_hierarchy a;
+
+select * from russian_address_data.addr_obj_type;
+select * from russian_address_data.addr_obj a where a.object_id=11840130;
+
+SELECT o1.type_name, o1.name as city, o2.type_name as street_name,
+o2.name as street, ht.short_name as short_name_house, h.house_num as house, i.path
+FROM RUSSIAN_ADDRESS_DATA.adm_hierarchy i
+INNER JOIN RUSSIAN_ADDRESS_DATA.addr_obj o1 ON SPLIT_PART(i.path, '.', 1) = o1.object_id::varchar
+INNER JOIN RUSSIAN_ADDRESS_DATA.addr_obj o2 ON i.parent_obj_id = o2.object_id and o2.name='Московская'
+INNER JOIN RUSSIAN_ADDRESS_DATA.house h ON i.object_id = h.object_id and h.house_num='78'
+INNER JOIN RUSSIAN_ADDRESS_DATA.house_type ht ON ht.id = h.house_type
+
+SELECT region.type_name as region_type, region.name as region, district.type_name as district_type, district.name as district,
+ city.type_name as city_type, city.name as city, street.type_name as street_type, street.name as street,
+ ht.short_name as short_name_house, house.house_num as house, apt.short_name as short_name_apartm, apartm.number as apartm,
+ rt.short_name as short_name_room, room.number as room, i.path
+FROM RUSSIAN_ADDRESS_DATA.adm_hierarchy i
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj region ON SPLIT_PART(i.path, '.', 1) = region.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj district ON SPLIT_PART(i.path, '.', 2) = district.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj city ON SPLIT_PART(i.path, '.', 3) = city.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.addr_obj street ON SPLIT_PART(i.path, '.', 4) = street.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.house house ON CASE 
+        WHEN district.type_name = 'г' THEN SPLIT_PART(i.path, '.', 4)
+        ELSE SPLIT_PART(i.path, '.', 5)
+    END = house.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.house_type ht ON ht.id = house.house_type
+LEFT JOIN RUSSIAN_ADDRESS_DATA.apartment apartm ON CASE 
+        WHEN district.type_name = 'г' THEN SPLIT_PART(i.path, '.', 5)
+        ELSE SPLIT_PART(i.path, '.', 6)
+    END = apartm.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.apartment_type apt ON apt.id = apartm.apart_type
+LEFT JOIN RUSSIAN_ADDRESS_DATA.room room ON CASE 
+        WHEN district.type_name = 'г' THEN SPLIT_PART(i.path, '.', 6)
+        ELSE SPLIT_PART(i.path, '.', 7)
+    END = room.object_id::varchar
+LEFT JOIN RUSSIAN_ADDRESS_DATA.room_type rt ON rt.id = room.room_type;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="d0fd571d-3dae-403d-b44d-4381c897b05d" object-ref="consoles/Connection" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="d0fd571d-3dae-403d-b44d-4381c897b05d" />
@@ -196,6 +283,7 @@ WHERE r.number IS NOT NULL AND rt.short_name IS NOT NULL;]]></console>
           <debugger-type value="ASK" />
         </debugger>
         <object-filters hide-empty-schemas="false" hide-pseudo-columns="false" hide-audit-columns="false">
+          <object-filters />
           <object-type-filter use-master-settings="true">
             <object-type name="SCHEMA" enabled="true" />
             <object-type name="USER" enabled="true" />
@@ -223,7 +311,6 @@ WHERE r.number IS NOT NULL AND rt.short_name IS NOT NULL;]]></console>
             <object-type name="CLUSTER" enabled="true" />
             <object-type name="DBLINK" enabled="true" />
           </object-type-filter>
-          <object-name-filters />
         </object-filters>
       </connection>
     </connections>
