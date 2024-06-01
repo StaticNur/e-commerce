@@ -15,8 +15,6 @@
     <modules>
         <module>address-parser</module>
         <module>fast-search-engine</module>
-        <module>address-parser</module>
-        <module>fast-search-engine</module>
     </modules>
 
     <properties>
