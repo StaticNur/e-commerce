@@ -12,7 +12,6 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
@@ -22,16 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.*;
 
 @Service
 public class EsServiceImpl implements EsService {
 
-    private final static String INDEX_NAME = "addres";
+    private final static String INDEX_NAME = "address";
     private final RestHighLevelClient esClient;
     private final ObjectMapper mapper;
     private final AddressFormation addressFormation;
@@ -43,123 +38,16 @@ public class EsServiceImpl implements EsService {
         this.addressFormation = addressFormation;
     }
 
-    /*SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
-         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-         String[] parts = query.split(" ");
-         //String s1 = "Республика Мордовия, г.о. Саранск, г Саранск, ул Б.Хмельницкого, д. 14";
-         // (?:Мордовия\s+)?(?:г\.\s+)?Саранск\s+ул\.\s+Ленина\s+14
-         StringBuilder stringBuilder = new StringBuilder();
-         stringBuilder.append("^(.*?)");
-         for (String s: parts) {
-             stringBuilder.append("(").append(s).append(")")
-                     .append("(.*?)");
-         }
-         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-         String address = stringBuilder.toString();
-
-         if (!address.isEmpty()) {
-             System.out.println("Address: " + address);
-             RegexpQueryBuilder regexpQuery = QueryBuilders.regexpQuery("address", address);
-             boolQuery.must(regexpQuery);
-         }
-         searchSourceBuilder.query(boolQuery);
-         searchSourceBuilder.size(10000);
-         searchRequest.source(searchSourceBuilder);
-
-         SearchResponse searchResponse;
-         try {
-             searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
-         } catch (IOException e) {
-             throw new RuntimeException(e);
-         }
-         return extractAddressesFromResponse(searchResponse);*/
-
-    /*String s = "Респ Мордовия, г. Саранск, ул. Б.Хмельницкого, д. 14 кв. 14";
-        String s1 = "Респ Мордовия, г. Саранск, ул. Б. Хмельницкого, д. 14";
-        String s2 = "Респ Мордовия, г. Саранск, улица Б.Хмельницкого, д. 14";
-        String s3 = "Республика Мордовия, г. Саранск, улица Б.Хмельницкого, д. 14";
-        String s4 = "Республика Мордовия, г. Саранск, улица Б. Хмельницкого, дом 14, кв 14";
-        String s5 = "Республика Мордовия, город Саранск, улица Б. Хмельницкого, дом 14, квартира 14";
-        String s6 = "Мордовия, Саранск, Б.Хмельницкого, 14, 14";*/
-
-    /*SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-        //Респ Мордовия, г Саранск, пр-кт Ленина
-        String s = "Респ Мордовия, г Саранск, ул Б.Хмельницкого, д. 14, кв. 14";
-        String pattern = "(.*?)" + s.replaceAll(", ", "(.*?)") + "(.*?)";
-        QueryBuilder regexQuery = QueryBuilders.regexpQuery("address", "(.*?)(б\\.хмельницкого)(.*?)");
-
-
-        query = query.toLowerCase();
-        query = query.replaceFirst("республика", "респ");
-        query = query.replaceAll("[,.;]", "");
-        String[] addressParts = query.split(" ");
-
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-
-        for (int i = 0; i < addressParts.length; i++) {
-            System.out.println(addressParts[i]);
-            if (addressParts[i].equals("д")) {
-                i++;
-                if (i < addressParts.length) {
-                    boolQuery.must(QueryBuilders.matchPhraseQuery("address", "д. "+addressParts[i]));
-                }
-            }if (addressParts[i].equals("кв")) {
-                i++;
-                if (i < addressParts.length) {
-                    boolQuery.must(QueryBuilders.matchPhraseQuery("address", "кв. "+addressParts[i]));
-                }
-            } else {
-                boolQuery.must(QueryBuilders.regexpQuery("address", "(.*?)(" + addressParts[i] + ")(.*?)"));
-            }
-        }
-        searchSourceBuilder.query(boolQuery);
-        searchSourceBuilder.size(10000);
-        searchRequest.source(searchSourceBuilder);
-
-        SearchResponse searchResponse;
-        try {
-            searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return extractAddressesFromResponse(searchResponse);*/
     @Override
     public List<Address> searchAddress(String query) {
-        /*SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
-SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-query = query.toLowerCase();
-query = query.replaceFirst("республика", "респ");
-query = query.replaceAll("[,.;]", "");
-String[] addressParts = query.split(" ");
-
-BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-
-//for (int i = 0; i < addressParts.length; i++) {
-//System.out.println(addressParts[i]);
-boolQuery.must(QueryBuilders.regexpQuery("address", "(.*?)" + "мордовия" + "(.*?)" + "саранск" + "(.*?)"));
-//}
-
-searchSourceBuilder.query(boolQuery);
-searchSourceBuilder.size(10000);
-searchRequest.source(searchSourceBuilder);
-
-SearchResponse searchResponse;
-try {
-    searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
-} catch (IOException e) {
-    throw new RuntimeException(e);
-}
-return extractAddressesFromResponse(searchResponse);*/
         SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-        query = query.toLowerCase();
-        query = query.replaceFirst("республика", "респ");
-        query = query.replaceAll("[,.;]", "");
+        query = query.toLowerCase()
+                .replaceFirst("республика", "респ")
+                .replaceAll("[,;!&$?№~@#%^*+:<>=]", "")
+                .replaceAll("[-.]"," ")
+                .replaceAll("/"," ");
         String[] addressParts = query.split(" ");
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -195,50 +83,6 @@ return extractAddressesFromResponse(searchResponse);*/
             throw new RuntimeException(e);
         }
         return extractAddressesFromResponse(searchResponse);
-        /*SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-        String[] parts = query.split(" ");
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(.*?)");
-        for (String s: parts) {
-            stringBuilder.append("(").append(s).append(")")
-                    .append("(.*?)");
-        }
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        String address = stringBuilder.toString();
-        address = address.toLowerCase();
-        if (!address.isEmpty()) {
-            System.out.println("Address: " + address);
-            RegexpQueryBuilder regexpQuery = QueryBuilders.regexpQuery("address", address);
-            boolQuery.must(regexpQuery);
-        }
-        searchSourceBuilder.query(boolQuery);
-        searchSourceBuilder.size(10000);
-        searchRequest.source(searchSourceBuilder);
-
-        SearchResponse searchResponse;
-        try {
-            searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return extractAddressesFromResponse(searchResponse);*/
-        /*SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-        searchSourceBuilder.query(QueryBuilders.matchPhraseQuery("address", query));
-        searchSourceBuilder.size(10000);
-
-        searchRequest.source(searchSourceBuilder);
-
-        SearchResponse searchResponse;
-        try {
-            searchResponse = esClient.search(searchRequest, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return extractAddressesFromResponse(searchResponse);*/
     }
 
     @Override
@@ -247,11 +91,7 @@ return extractAddressesFromResponse(searchResponse);*/
         long fromIndex = 0;
         long toIndex = batchSize;
 
-        //while (true) {
         List<Address> addressBatch = addressFormation.getAddress(fromIndex, toIndex);
-        if (addressBatch.isEmpty()) {
-            //break;
-        }
 
         for (; fromIndex < addressBatch.size(); fromIndex += batchSize) {
             toIndex = Math.min(fromIndex + batchSize, addressBatch.size());
@@ -261,12 +101,8 @@ return extractAddressesFromResponse(searchResponse);*/
             BulkRequest bulkRequest = prepareBulkRequest(batch);
             executeBulkRequest(bulkRequest);
         }
-
-
-        fromIndex += batchSize;
         toIndex += batchSize;
         System.out.println("Size: " + toIndex);//Size: 552_257
-        //}
     }
 
     private List<Address> extractAddressesFromResponse(SearchResponse searchResponse) {
@@ -275,12 +111,16 @@ return extractAddressesFromResponse(searchResponse);*/
             Address address = getAddress(hit);
             addresses.add(address);
         }
+        Collections.reverse(addresses);
         return addresses;
     }
 
     private Address getAddress(SearchHit hit) {
         Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-        return Address.builder().address(sourceAsMap.getOrDefault("address", "").toString()).path(sourceAsMap.getOrDefault("path", "").toString()).build();
+        return Address.builder()
+                .address(sourceAsMap.getOrDefault("address", "").toString())
+                .path(sourceAsMap.getOrDefault("path", "").toString())
+                .build();
     }
 
     private BulkRequest prepareBulkRequest(List<Address> allAddress) {
@@ -317,14 +157,4 @@ return extractAddressesFromResponse(searchResponse);*/
             }
         }
     }
-
-    public String normalizeAddress(String address) {
-        String normalizedAddress = address.replaceAll("[,.;]", "");
-
-        normalizedAddress = normalizedAddress.replaceAll("\\bг(.*?)\\b", "г. ");
-        normalizedAddress = normalizedAddress.replaceAll("\\bд(.*?)\\b", "д. ");
-        normalizedAddress = normalizedAddress.replaceAll("\\bкв(.*?)\\b", "кв. ");
-        return normalizedAddress;
-    }
-
 }

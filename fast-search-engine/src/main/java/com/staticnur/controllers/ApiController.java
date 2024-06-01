@@ -35,5 +35,4 @@ public class ApiController {
     public List<Address> search(@RequestParam("query") String query) throws Exception {
         return esService.searchAddress(query);
     }
-
 }
