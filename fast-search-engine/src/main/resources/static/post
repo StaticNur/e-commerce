@@ -1,0 +1,41 @@
+Создание индекса:
+PUT /имя_индекса
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  }
+}
+Определение маппинга полей:
+PUT /имя_индекса/_mapping
+{
+  "properties": {
+    "поле1": {
+      "type": "тип1"
+    },
+    "поле2": {
+      "type": "тип2"
+    },
+    ...
+  }
+}
+
+
+
+
+POST /_plugins/_jdbc/sql
+{
+  "query": "SELECT * FROM your_table",
+  "fetchsize": 1000,
+  "field_mapping": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "text"
+    },
+    "age": {
+      "type": "integer"
+    }
+  }
+}

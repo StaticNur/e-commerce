@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  elastic-search-address:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    container_name: elastic-search-address
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - "discovery.type=single-node"
+    deploy:
+      resources:
+        limits:
+          memory: 2g

@@ -9,13 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.staticnur</groupId>
-    <artifactId>e-commerce</artifactId>
+    <artifactId>russian-address-service</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>parser-xml</module>
-        <module>fast-search-engine</module>
-        <module>parser-xml</module>
+        <module>address-parser</module>
         <module>fast-search-engine</module>
     </modules>
 
@@ -25,8 +23,25 @@
     </properties>
 
     <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>3.2.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version> <!-- Версия может отличаться -->
+        </dependency>
+
+    </dependencies>
     <build>
         <plugins>
             <plugin>

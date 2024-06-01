@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.10.xsd">
+    <changeSet id="002-create-tables" author="Mukhammadnur">
+        <sql>
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.ADDR_OBJ_TYPE(
+                id INT PRIMARY KEY NOT NULL,
+                level INT NOT NULL,
+                name VARCHAR(250) NOT NULL,
+                short_name VARCHAR(50) NOT NULL,
+                description VARCHAR(255),
+                update_date DATE NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                is_active boolean NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.ROOM_TYPE(
+                id INT PRIMARY KEY NOT NULL,
+                name VARCHAR(100) NOT NULL,
+                short_name VARCHAR(55),
+                description VARCHAR(255),
+                is_active boolean NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL ,
+                update_date DATE NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.HOUSE_TYPE(
+                id INT PRIMARY KEY NOT NULL,
+                name VARCHAR(55) NOT NULL,
+                short_name VARCHAR(55),
+                description VARCHAR(250),
+                is_active boolean NOT NULL,
+                update_date DATE NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.APARTMENT_TYPE(
+                id INT PRIMARY KEY NOT NULL,
+                name VARCHAR(55) NOT NULL,
+                short_name VARCHAR(55),
+                description VARCHAR(255),
+                is_active boolean NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                update_date DATE NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.ADDR_OBJ(
+                id bigint PRIMARY KEY,
+                object_id bigint NOT NULL,
+                object_guid VARCHAR(40) NOT NULL,
+                change_id bigint NOT NULL,
+                name VARCHAR(250) NOT NULL,
+                type_name VARCHAR(250) NOT NULL,
+                level VARCHAR(20) NOT NULL,
+                opertype_id INT NOT NULL,
+                prev_id bigint,
+                next_id bigint,
+                update_date DATE NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                is_actual INT NOT NULL,
+                is_active INT NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.APARTMENT(
+                id bigint PRIMARY KEY,
+                object_id bigint NOT NULL,
+                object_guid VARCHAR(40) NOT NULL,
+                change_id bigint NOT NULL,
+                number VARCHAR(55) NOT NULL,
+                apart_type INT NOT NULL,
+                oper_type_id bigint NOT NULL,
+                prev_id bigint,
+                next_id bigint,
+                update_date DATE NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                is_actual INT NOT NULL,
+                is_active INT NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.ROOM(
+                id bigint PRIMARY KEY,
+                object_id bigint NOT NULL,
+                object_guid VARCHAR(40) NOT NULL,
+                change_id bigint NOT NULL,
+                number VARCHAR(55) NOT NULL,
+                room_type INT NOT NULL,
+                oper_type_id bigint NOT NULL,
+                prev_id bigint,
+                next_id bigint,
+                update_date DATE NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                is_actual INT NOT NULL,
+                is_active INT NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.HOUSE(
+                id bigint PRIMARY KEY,
+                object_id bigint NOT NULL,
+                object_guid VARCHAR(40) NOT NULL,
+                change_id bigint NOT NULL,
+                house_num VARCHAR(55),
+                addnum1 VARCHAR(55),
+                addnum2 VARCHAR(55),
+                house_type INT,
+                addtype1 INT,
+                addtype2 INT,
+                oper_type_id bigint NOT NULL,
+                prev_id bigint,
+                next_id bigint,
+                update_date DATE NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                is_actual INT NOT NULL,
+                is_active INT NOT NULL
+            );
+            CREATE TABLE RUSSIAN_ADDRESS_DATA.ADM_HIERARCHY(
+                id bigint PRIMARY KEY,
+                object_id bigint NOT NULL,
+                parent_obj_id bigint,
+                change_id bigint NOT NULL,
+                region_code VARCHAR(5),
+                area_code VARCHAR(5),
+                city_code VARCHAR(5),
+                place_code VARCHAR(5),
+                plan_code VARCHAR(5),
+                street_code VARCHAR(5),
+                prev_id bigint,
+                next_id bigint,
+                update_date DATE NOT NULL,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                is_active INT NOT NULL,
+                path VARCHAR(512) NOT NULL
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

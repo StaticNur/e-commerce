@@ -1,0 +1,17 @@
+server:
+  port: 8082
+
+datasource:
+  acq:
+    clients:
+      pool-name: acq
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: jdbc:postgresql://localhost:5432/search_service
+      username: postgres_user
+      password: postgres_pass
+
+spring:
+  liquibase:
+    enabled: true
+    change-log: classpath:db.changelog/changelog.xml
+    liquibase-schema: russian_address_data
